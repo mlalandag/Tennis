@@ -34,7 +34,7 @@ print('There are {} agents. Each observes a state with length: {}'.format(states
 print('The state for the first agent looks like:', states[0])
 
 
-max_num_episodes = 10000
+max_num_episodes = 50000
 
 episode_scores = []
 

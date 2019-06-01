@@ -10,8 +10,8 @@ import torch.optim as optim
 BUFFER_SIZE = int(1e5)  # replay buffer size
 BATCH_SIZE = 128  # minibatch size
 GAMMA = 0.99  # discount factor
-TAU = 1e-3  # for soft update of target parameters
-LR_ACTOR = 1e-4  # learning rate of the actor
+TAU = 5e-3  # for soft update of target parameters
+LR_ACTOR = 1e-3  # learning rate of the actor
 LR_CRITIC = 1e-3  # learning rate of the critic
 WEIGHT_DECAY = 0  # L2 weight decay
 
@@ -115,8 +115,10 @@ class Agent():
         Q_targets_next = self.critic_target(next_states_left, next_states_right, actions_next_left, actions_next_right)
         # Compute Q targets for current states (y_i)
         if self.id == "left":
+            # print('Q_targets L {}'.format(self.id))
             Q_targets = rewards_left + (gamma * Q_targets_next * (1 - dones_left))
         else:
+            # print('Q_targets R {}'.format(self.id))
             Q_targets = rewards_right + (gamma * Q_targets_next * (1 - dones_right))
 
         # Compute critic loss
@@ -124,7 +126,8 @@ class Agent():
         critic_loss = F.mse_loss(Q_expected, Q_targets)
         # Minimize the loss
         self.critic_optimizer.zero_grad()
-        critic_loss.backward()
+        critic_loss.backward(retain_graph=True)
+        #critic_loss.backward()
         self.critic_optimizer.step()
 
         # ---------------------------- update actor ---------------------------- #
@@ -134,7 +137,8 @@ class Agent():
         actor_loss = -self.critic_local(states_left, states_right, actions_pred_left, actions_pred_right).mean()
         # Minimize the loss
         self.actor_optimizer.zero_grad()
-        actor_loss.backward()
+        actor_loss.backward(retain_graph=True)
+        #actor_loss.backward()
         self.actor_optimizer.step()
 
         # ----------------------- update target networks ----------------------- #
