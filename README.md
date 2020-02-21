@@ -1,19 +1,20 @@
 [//]: # (Image References)
 
-# Project 2: Continuous Control
+# Project 3: Collaboration and Competition
 
 ### Introduction
  
-![Plot](Reacher.png)
+![Plot](Tennis.png)
 
-In this environment, a double-jointed arm can move to target locations. A reward of +0.1 is provided for each step that the agent's hand is in the goal location. Thus, the goal of your agent is to maintain its position at the target location for as many time steps as possible.
+In this environment, two agents control rackets to bounce a ball over a net. If an agent hits the ball over the net, it receives a reward of +0.1. If an agent lets a ball hit the ground or hits the ball out of bounds, it receives a reward of -0.01. Thus, the goal of each agent is to keep the ball in play.
 
-The observation space consists of 33 variables corresponding to position, rotation, velocity, and angular velocities of the arm. Each action is a vector with four numbers, corresponding to torque applicable to two joints. Every entry in the action vector should be a number between -1 and 1.
+The observation space consists of 8 variables corresponding to the position and velocity of the ball and racket. Each agent receives its own, local observation. Two continuous actions are available, corresponding to movement toward (or away from) the net, and jumping.
 
-### Solving the Environment
+The task is episodic, and in order to solve the environment, your agents must get an average score of +0.5 (over 100 consecutive episodes, after taking the maximum over both agents). Specifically,
 
-In this particular case i´m solving the first versión of the environment, which is the one with only one agent. The goal is to 
- get an average score of +30 over 100 consecutive episodes. The algorithm chosen to solve the task is DDPG.
+After each episode, we add up the rewards that each agent received (without discounting), to get a score for each agent. This yields 2 (potentially different) scores. We then take the maximum of these 2 scores.
+This yields a single score for each episode.
+The environment is considered solved, when the average (over 100 episodes) of those scores is at least +0.5.
 
 ### Getting Started
 
@@ -62,17 +63,18 @@ In this particular case i´m solving the first versión of the environment, whic
 ## Files
 
 - agent.py: Contains the agent who interacts with the environment and is used to train the model. 
+- multi_agent: Instantiates the two agents and implement the step and act methods. 
 - model.py: Contains the Neural Networks implemented in Pytorch that is used to pick the actions and evaluate them. 
 - replay_buffer.py: Helper class to implement the Esperience Replay algorithm.
-- OUNoise.py: Helper Class to implement the addition of some noise to the actions chosen by the agent 
-- agent_training.py: Process that delivers the trained model. 
-- agent_testing.py: Execution of some episodes with the agent using the trained model. 
+- OUNoise.py: Helper Class to implement the addition of some noise to the actions chosen by the agents
+- agents_training.py: Process that delivers the trained model. 
+- agents_testing.py: Execution of some episodes with the agent using the trained model. 
 
 ## Training
 
  - Go to the root folder of the repo and run:
  
- 	`python agent_training.py`
+ 	`python agents_training.py`
 	
  - When the score reaches the value +13 it will stop and save the model weights to the file .
 
@@ -80,7 +82,7 @@ In this particular case i´m solving the first versión of the environment, whic
 
  - To test the trained agent:
  
- 	`python agent_test.py`
+ 	`python agents_test.py`
  	
 ### The base algorithm for this project is taken from the following udacity repo:
 
