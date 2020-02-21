@@ -1,14 +1,12 @@
-
 import torch
-from actor import Actor
-from critic import Critic
+from model import Actor, Critic
 from agent import Agent
 from ReplayBuffer import ReplayBuffer
 import numpy as np
 import random
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 128  # minibatch size
+BATCH_SIZE = 2  # minibatch size
 GAMMA = 0.99  # discount factor
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -31,64 +29,46 @@ class MultiAgent():
         self.n_agents = n_agents
         self.state_size = state_size
         self.action_size = action_size
-        self.critic_input_size = (state_size + action_size) * self.n_agents
         self.agents = []
 
-        # create two agents, each with their own actor and critic
-        self.actor_local_left = Actor(state_size, action_size, seed).to(device)
-        self.actor_target_left = Actor(state_size, action_size, seed).to(device)
-        self.critic_local_left = Critic(self.critic_input_size, seed).to(device)
-        self.critic_target_left = Critic(self.critic_input_size, seed).to(device)
-        self.agent_left = Agent("left", self.action_size, self.actor_local_left, self.actor_target_left,
-                                self.critic_local_left, self.critic_target_left, seed)
-
-        self.actor_local_rigth = Actor(state_size, action_size, seed).to(device)
-        self.actor_target_rigth = Actor(state_size, action_size, seed).to(device)
-        self.critic_local_rigth = Critic(self.critic_input_size, seed).to(device)
-        self.critic_target_right = Critic(self.critic_input_size, seed).to(device)
-        self.agent_right = Agent("right", self.action_size, self.actor_local_rigth, self.actor_target_rigth,
-                            self.critic_local_rigth, self.critic_target_right, seed)
+        # create agents
+        self.agent_0 = Agent(0, self.state_size, self.action_size, seed)
+        self.agent_1 = Agent(1, self.state_size, self.action_size, seed)
 
         # Replay memory
-        self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, self.seed)
+        self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
 
     def step(self, states, actions, rewards, next_states, dones):
         """Save experience in replay memory, and use random sample from buffer to learn."""
 
-        self.memory.add(states[0], states[1], actions[0], actions[1], rewards[0], rewards[1],
-                        next_states[0], next_states[1], dones[0], dones[1])
+        # Save experience / reward
+        self.memory.add(states, actions, rewards, next_states, dones)
 
-        #print('elementos en memoria: {}'.format(len(self.memory)))
         # Learn, if enough samples are available in memory
         if len(self.memory) > BATCH_SIZE:
             experiences = self.memory.sample()
-            # print('Experiences = ', experiences)
-            self.learn(experiences, GAMMA)
 
+            states, actions, rewards, next_states, dones = experiences
 
-    def learn(self, experiences, GAMMA):
+            #actions_next_0 = self.agent_0.actor_target(next_states[:, 0, :])
+            #print("actions_next_0 ", actions_next_0)
+            #actions_next_1 = self.agent_1.actor_target(next_states[:, 1, :])
+            #actions_next = torch.tensor([actions_next_0, actions_next_1])
+            #actions_next = [actions_next_0, actions_next_1]
 
-        states_left, states_right, actions_left, actions_right, rewards_left, rewards_right, \
-            next_states_left, next_states_right, dones_left, dones_right = experiences
+            #actions_pred_0 = self.agent_0.actor_local(states[:, 0, :])
+            #actions_pred_1 = self.agent_1.actor_local(states[:, 1, :])
+            #actions_pred = [actions_pred_0, actions_pred_1]
 
-        actions_next_left = self.agent_left.actor_target(next_states_left)
-        actions_next_right = self.agent_right.actor_target(next_states_right)
-        actions_next = [actions_next_left, actions_next_right]
-
-        actions_pred_left = self.agent_left.actor_local(states_left)
-        actions_pred_right = self.agent_right.actor_local(states_right)
-        actions_pred = [actions_pred_left, actions_pred_right]
-
-        self.agent_left.learn(experiences, actions_next, actions_pred, GAMMA)
-        self.agent_right.learn(experiences, actions_next, actions_pred, GAMMA)
+            self.agent_0.learn(states, actions, rewards, next_states, dones, GAMMA)
+            self.agent_1.learn(states, actions, rewards, next_states, dones, GAMMA)
 
     def act(self, states, add_noise=True):
 
-        action_left = self.agent_left.act(states[0], add_noise)
-        action_right = self.agent_right.act(states[1], add_noise)
+        #print('Act States: ', states)
 
-        return [action_left, action_right]
+        action_0 = self.agent_0.act(states[0], add_noise)
+        action_1 = self.agent_1.act(states[1], add_noise)
 
-        # actions = np.random.randn(2, 2)
-        # actions = np.clip(actions, -1, 1)
-        # return actions
+        return [action_0, action_1]
+

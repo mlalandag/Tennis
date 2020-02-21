@@ -56,6 +56,8 @@ for episode in range(1, max_num_episodes+1):
         rewards = env_info.rewards                         # get reward (for each agent)
         dones = env_info.local_done                        # see if episode finished
 
+        actions = np.squeeze(actions, axis=1)
+
         agents.step(states, actions, rewards, next_states, dones)
 
         scores += env_info.rewards                         # update the score (for each agent)
