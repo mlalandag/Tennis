@@ -13,7 +13,7 @@ def hidden_init(layer):
 class Actor(nn.Module):
     """Actor (Policy) Model."""
 
-    def __init__(self, state_size, action_size, seed, fc1_units=128, fc2_units=128):
+    def __init__(self, state_size, action_size, seed, fc1_units=256, fc2_units=128):
         """Initialize parameters and build model.
         Params
         ======
@@ -43,23 +43,23 @@ class Actor(nn.Module):
         #print('Forward state: ', state)
 
         """Build an actor (policy) network that maps states -> actions."""
-        if state.dim() == 1:
-            state = torch.unsqueeze(state, 0)
+        # if state.dim() == 1:
+        #     state = torch.unsqueeze(state, 0)
 
         #print('Unsqueezed state: ', state)
 
-        state = self.bn0(state)
+        #state = self.bn0(state)
         x = F.relu(self.fc1(state))
-        x = self.bn1(x)
+        #x = self.bn1(x)
         x = F.relu(self.fc2(x))
-        x = self.bn2(x)
+        #x = self.bn2(x)
         return torch.tanh(self.fc3(x))
 
 
 class Critic(nn.Module):
     """Critic (Value) Model."""
 
-    def __init__(self, state_size, action_size, seed, fc1_units=128, fc2_units=128):
+    def __init__(self, state_size, action_size, seed, fc1_units=256, fc2_units=128):
         """Initialize parameters and build model.
         Params
         ======
@@ -85,12 +85,14 @@ class Critic(nn.Module):
 
     def forward(self, state, action):
         """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
-        if state.dim() == 1:
-            state = torch.unsqueeze(state, 0)
 
-        state = self.bn0(state)
-        x = F.relu(self.fc1(state))
-        x = self.bn1(x)
-        x = torch.cat((x, action.float()), dim=1)
+        # if state.dim() == 1:
+        #     state = torch.unsqueeze(state, 0)
+
+        #state = self.bn0(state)
+        xs = F.relu(self.fc1(state))
+        #x = self.bn1(x)
+        #x = torch.cat((x, action.float()), dim=1)
+        x = torch.cat((xs, action), dim=1)        
         x = F.relu(self.fc2(x))
         return self.fc3(x)

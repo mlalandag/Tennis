@@ -34,7 +34,7 @@ print('There are {} agents. Each observes a state with length: {}'.format(states
 print('The state for the first agent looks like:', states[0])
 
 
-max_num_episodes = 50000
+max_num_episodes = 5000
 
 episode_scores = []
 
@@ -45,6 +45,7 @@ print("loop over episodes")
 for episode in range(1, max_num_episodes+1):
      
     env_info = env.reset(train_mode=False)[brain_name]     # reset the environment
+    agents.reset()    
     states = env_info.vector_observations                  # get the current state (for each agent)
     scores = np.zeros(num_agents)                          # initialize the score (for each agent)
 
@@ -56,7 +57,7 @@ for episode in range(1, max_num_episodes+1):
         rewards = env_info.rewards                         # get reward (for each agent)
         dones = env_info.local_done                        # see if episode finished
 
-        actions = np.squeeze(actions, axis=1)
+        #actions = np.squeeze(actions, axis=1)
 
         agents.step(states, actions, rewards, next_states, dones)
 
@@ -72,10 +73,9 @@ for episode in range(1, max_num_episodes+1):
     print('Total score for episode {} : {:.2f} - Mean last 100 episodes {:.2f}'.format(episode, np.max(scores), mean_last_100))
 
     if mean_last_100 > 0.5:
-        torch.save(agents.agent_left.actor_local.state_dict(), 'weights_agent_left_actor.pth')
-        torch.save(agents.agent_left.critic_local.state_dict(), 'weights_agent_left_critic.pth')
-        torch.save(agents.agent_right.actor_local.state_dict(), 'checkpoint_agent_right_actor.pth')
-        torch.save(agents.agent_right.critic_local.state_dict(), 'checkpoint_agent_right_critic.pth')
+        for id, agent in enumerate(self.agents):
+                torch.save(agents[id].actor_local.state_dict(), 'weights_agent_' + id + '_actor.pth')
+                torch.save(agents[id].critic_local.state_dict(), 'weights_agent_' + id + '_critic.pth')
 
 #Plot scores and save to image file
 graph = plt.figure()
