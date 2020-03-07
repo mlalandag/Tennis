@@ -73,9 +73,12 @@ for episode in range(1, max_num_episodes+1):
     print('Total score for episode {} : {:.2f} - Mean last 100 episodes {:.2f}'.format(episode, np.max(scores), mean_last_100))
 
     if mean_last_100 > 0.5:
-        for id, agent in enumerate(self.agents):
-                torch.save(agents[id].actor_local.state_dict(), 'weights_agent_' + id + '_actor.pth')
-                torch.save(agents[id].critic_local.state_dict(), 'weights_agent_' + id + '_critic.pth')
+        
+        for id, agent in enumerate(agents.agents):
+                torch.save(agent.actor_local.state_dict(),  'weights_agent_' + str(id) + '_actor.pth')
+                torch.save(agent.critic_local.state_dict(), 'weights_agent_' + str(id) + '_critic.pth')
+
+        break
 
 #Plot scores and save to image file
 graph = plt.figure()
