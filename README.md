@@ -76,7 +76,7 @@ The environment is considered solved, when the average (over 100 episodes) of th
  
  	`python agents_training.py`
 	
- - When the score reaches the value +13 it will stop and save the model weights to the file .
+ - When the score reaches the value 0.5 it will stop and save the model weights to the file .
 
 ## Testing
 
