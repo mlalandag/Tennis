@@ -51,7 +51,7 @@ by the actor
 
 The algorithm took 2150 episodes to solve the environment.
 
-![Plot](scores.png)
+![Plot](scores.jpg)
 
 ### Ideas for Future Work
 
