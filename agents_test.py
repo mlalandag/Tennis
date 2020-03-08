@@ -40,11 +40,16 @@ episode_scores = []
 
 agents = MultiAgent(num_agents, state_size, action_size, 1)
 
+agents.agents[0].actor_local.load_state_dict(torch.load('weights_agent_0_actor.pth'))
+agents.agents[0].critic_local.load_state_dict(torch.load('weights_agent_0_critic.pth'))
+agents.agents[1].actor_local.load_state_dict(torch.load('weights_agent_1_actor.pth'))
+agents.agents[1].critic_local.load_state_dict(torch.load('weights_agent_1_critic.pth'))
+
 print("loop over episodes")
 
 for episode in range(1, max_num_episodes+1):
      
-    env_info = env.reset(train_mode=True)[brain_name]     # reset the environment
+    env_info = env.reset(train_mode=False)[brain_name]     # reset the environment
     agents.reset()    
     states = env_info.vector_observations                  # get the current state (for each agent)
     scores = np.zeros(num_agents)                          # initialize the score (for each agent)
@@ -70,21 +75,6 @@ for episode in range(1, max_num_episodes+1):
 
     print('Total score for episode {} : {:.2f} - Mean last 100 episodes {:.2f}'.format(episode, np.max(scores), mean_last_100))
 
-    if mean_last_100 > 0.5:
-        
-        for id, agent in enumerate(agents.agents):
-                torch.save(agent.actor_local.state_dict(),  'weights_agent_' + str(id) + '_actor.pth')
-                torch.save(agent.critic_local.state_dict(), 'weights_agent_' + str(id) + '_critic.pth')
-
-        break
-
-#Plot scores and save to image file
-graph = plt.figure()
-plt.plot([score for score in range(len(episode_scores))], episode_scores)
-plt.ylabel('scores')
-plt.xlabel('episodes')
-plt.show()
-graph.savefig('scores.jpg')
 
 #When finished, you can close the environment.
 env.close()

@@ -19,10 +19,10 @@ The environment is considered solved, when the average (over 100 episodes) of th
 ### Getting Started
 
 1. Download the environment from one of the links below.  You need only select the environment that matches your operating system:
-    - Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Linux.zip)
-    - Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher.app.zip)
-    - Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Windows_x86.zip)
-    - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Windows_x86_64.zip)
+    - Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis_Linux.zip)
+    - Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis.app.zip)
+    - Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis_Windows_x86.zip)
+    - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis_Windows_x86_64.zip)
     
     (_For Windows users_) Check out [this link](https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64) if you need help with determining if your computer is running a 32-bit version or 64-bit version of the Windows operating system.
 
@@ -63,12 +63,12 @@ The environment is considered solved, when the average (over 100 episodes) of th
 ## Files
 
 - agent.py: Contains the agent who interacts with the environment and is used to train the model. 
-- multi_agent: Instantiates the two agents and implement the step and act methods. 
-- model.py: Contains the Neural Networks implemented in Pytorch that is used to pick the actions and evaluate them. 
+- multi_agent: Instantiates the two agents and a shared ReplayBuffer and implement the step and act methods. 
+- model.py: Contains the Neural Networks implemented in Pytorch that is used to pick the actions (actor) and evaluate them (Critic). 
 - replay_buffer.py: Helper class to implement the Esperience Replay algorithm.
 - OUNoise.py: Helper Class to implement the addition of some noise to the actions chosen by the agents
 - agents_training.py: Process that delivers the trained model. 
-- agents_testing.py: Execution of some episodes with the agent using the trained model. 
+- agents_test.py: Execution of some episodes with the agent using the trained model. 
 
 ## Training
 
@@ -84,8 +84,7 @@ The environment is considered solved, when the average (over 100 episodes) of th
  
  	`python agents_test.py`
  	
-### The base algorithm for this project is taken from the following udacity repo:
+### The base DDPG algorithm for this project is taken from the following udacity repo:
 
 https://github.com/udacity/deep-reinforcement-learning/tree/master/ddpg-bipedal	
  
-	
